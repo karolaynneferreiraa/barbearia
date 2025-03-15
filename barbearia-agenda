@@ -1,0 +1,161 @@
+// Arquivo: src/main/java/com/barbearia/agenda/BarbeariaAgendaApplication.java
+package com.barbearia.agenda;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BarbeariaAgendaApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(BarbeariaAgendaApplication.class, args);
+    }
+}
+
+// Arquivo: src/main/java/com/barbearia/agenda/model/Cliente.java
+package com.barbearia.agenda.model;
+
+import jakarta.persistence.*;
+
+@Entity
+public class Cliente {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nome;
+    private String telefone;
+    
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getTelefone() { return telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
+}
+
+// Arquivo: src/main/java/com/barbearia/agenda/model/Servico.java
+package com.barbearia.agenda.model;
+
+import jakarta.persistence.*;
+
+@Entity
+public class Servico {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String descricao;
+    private Double preco;
+    
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public Double getPreco() { return preco; }
+    public void setPreco(Double preco) { this.preco = preco; }
+}
+
+// Arquivo: src/main/java/com/barbearia/agenda/model/Agendamento.java
+package com.barbearia.agenda.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+public class Agendamento {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private LocalDateTime dataHora;
+    
+    @ManyToOne
+    private Cliente cliente;
+    
+    @ManyToOne
+    private Servico servico;
+    
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public LocalDateTime getDataHora() { return dataHora; }
+    public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
+    public Servico getServico() { return servico; }
+    public void setServico(Servico servico) { this.servico = servico; }
+}
+
+// Arquivo: src/main/java/com/barbearia/agenda/repository/ClienteRepository.java
+package com.barbearia.agenda.repository;
+
+import com.barbearia.agenda.model.Cliente;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {}
+
+// Arquivo: src/main/java/com/barbearia/agenda/repository/ServicoRepository.java
+package com.barbearia.agenda.repository;
+
+import com.barbearia.agenda.model.Servico;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ServicoRepository extends JpaRepository<Servico, Long> {}
+
+// Arquivo: src/main/java/com/barbearia/agenda/repository/AgendamentoRepository.java
+package com.barbearia.agenda.repository;
+
+import com.barbearia.agenda.model.Agendamento;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> {}
+
+// Arquivo: src/main/java/com/barbearia/agenda/service/ClienteService.java
+package com.barbearia.agenda.service;
+
+import com.barbearia.agenda.repository.ClienteRepository;
+import com.barbearia.agenda.model.Cliente;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
+@Service
+public class ClienteService {
+    @Autowired private ClienteRepository repository;
+    public List<Cliente> listar() { return repository.findAll(); }
+    public Cliente salvar(Cliente cliente) { return repository.save(cliente); }
+}
+
+// Arquivo: src/main/java/com/barbearia/agenda/service/ServicoService.java
+package com.barbearia.agenda.service;
+
+import com.barbearia.agenda.repository.ServicoRepository;
+import com.barbearia.agenda.model.Servico;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
+@Service
+public class ServicoService {
+    @Autowired private ServicoRepository repository;
+    public List<Servico> listar() { return repository.findAll(); }
+    public Servico salvar(Servico servico) { return repository.save(servico); }
+}
+
+// Arquivo: src/main/java/com/barbearia/agenda/service/AgendamentoService.java
+package com.barbearia.agenda.service;
+
+import com.barbearia.agenda.repository.AgendamentoRepository;
+import com.barbearia.agenda.model.Agendamento;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
+@Service
+public class AgendamentoService {
+    @Autowired private AgendamentoRepository repository;
+    public List<Agendamento> listar() { return repository.findAll(); }
+    public Agendamento salvar(Agendamento agendamento) { return repository.save(agendamento); }
+}
+
+// Arquivo: src/main/resources/application.properties
+spring.datasource.url=jdbc:h2:mem:barbearia
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+
